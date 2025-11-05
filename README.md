@@ -151,8 +151,6 @@ The proposed model is based on a Bayesian approach rather than a conventional fr
 
 The intercept parameters correspond to the average fixed-effect $$\omega$$, the average causal effect $$\delta$$, and the average treatment-logit $$\eta$$. The graphs above show the posterior distributions of these three parameters. The average treatment logit is estimated at $$\eta = -0.23$$. Converting this to probability yields $$\sigma(\eta) \approx 0.443$$, which means that the likelihood of the social-distancing easing announcement affecting any given small-business unit is estimated at approximately **44.3%** on average. The average causal effect is estimated at $$\delta = 0.48$$; converting from the log-scale of sales to a rate of change gives $$\exp(\delta) - 1 \approx 0.614$$, indicating that following the easing announcement each small-business unit’s sales are estimated to have increased by about **61.4%** on average compared to the prior period.
 
-![area_type](./desc/area_type.png)
-
 | Area type | Treated prob. | ATT |
 |:---:|:---:|:---:|
 | 골목상권 | 1.9% | +947.1% |
@@ -162,9 +160,9 @@ The intercept parameters correspond to the average fixed-effect $$\omega$$, the 
 
 Examining the treated-probabilities $$\sigma(\eta + u)$$ by area type reveals that 골목상권 (1.9 %) and 발달상권 (0.75 %) had very low probabilities, indicating these were not the primary direct targets of the policy. In contrast, 전통시장 (99.8 %) had a very high probability, pointing to it being a core implementation target, while 관광특구 (49.2 %) lay at an intermediate level. At the same time, the posterior means of causal effects (ATT = $$\delta + p$$) show that 골목상권 and 발달상권 registered large positive responses (＋947.1 %, +209.0 %), whereas 관광특구 and 전통시장 exhibited negative responses (−41.3 %, −19.1 %).
 
-This pattern can be interpreted as follows: 골목상권 and 발달상권 were not originally the direct focus of the social-distancing easing policy, and thus the announcement served as an explicit signal, triggering a rapid rebound in consumer sentiment and sales. On the other hand, 관광특구 and 전통시장 had already been part of the policy’s main application domain, and the easing announcement essentially formalised a recovery process that was already underway. As a result, their additional improvement potential following the announcement was limited, and in some cases a compensatory effect emerged.
+![area_type](./desc/area_type.png)
 
-![industries](./desc/industries.png)
+This pattern can be interpreted as follows: 골목상권 and 발달상권 were not originally the direct focus of the social-distancing easing policy, and thus the announcement served as an explicit signal, triggering a rapid rebound in consumer sentiment and sales. On the other hand, 관광특구 and 전통시장 had already been part of the policy’s main application domain, and the easing announcement essentially formalised a recovery process that was already underway. As a result, their additional improvement potential following the announcement was limited, and in some cases a compensatory effect emerged.
 
 | Industry | Treated prob. | ATT |
 |:---:|:---:|:---:|
@@ -183,5 +181,7 @@ This pattern can be interpreted as follows: 골목상권 and 발달상권 were n
 | 필수재소매업 | 6.6% | +558.0% |
 
 Looking across industries, those with treated probabilities below 10 % (e.g., 건강서비스업, 건강소매업, 생활서비스업, 필수재소매업) were generally not direct policy targets and exhibited high positive ATT. In contrast, industries such as 교육서비스업 and 자동차업 had treated probabilities around 100 %, consistent with policy application targets. Industries in the 40 %–50 % range (e.g., 사치재소매업, 외식업, 전자상거래업) were partially exposed. The highest positive ATT values occurred in industries such as 사치재소매업 (+605.7 %), 필수재소매업 (+558.0 %), 건강서비스업 (+246.3 %), and 외식업 (+249.3 %). Meanwhile, industries such as 교육서비스업, 자동차업, 전자상거래업, 부동산업, 숙박업 displayed negative ATT.
+
+![industries](./desc/industries.png)
 
 As with the area-type analysis, a clear inverse relationship emerges: industries with low treated probability tend to exhibit high positive ATT, whereas those with high treated probability show low or negative ATT. This suggests that in sectors with low exposure probability, the easing announcement functioned as a consumer-sentiment recovery trigger, while in sectors already richly exposed the announcement marked a stage of policy-expectation exhaustion or adjustment phase.
