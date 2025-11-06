@@ -107,9 +107,13 @@ p(\pi_{i,k} \mid D_{i,k})
 
 ### Data
 
-This study utilises estimated sales data for small business owners provided by the Seoul Open Data Plaza, covering the period from 2Q 2020 to 1Q 2024. The dataset comprises information on estimated sales for a total of 4 types of business districts, 1,596 business districts, and 63 industry categories. For the sake of analytical convenience, individual business-district identifiers were omitted, using only the business-district type and industry category as identifiers. Because the sales distribution contained many extreme values, a log transformation was applied. Accordingly, the dependent variable in this analysis is not the amount of sales per se, but rather the rate of change in sales.
+This study utilises estimated sales data for small business owners provided by the Seoul Open Data Plaza, covering the period from 2Q 2020 to 1Q 2024.
 
 - Seoul Open Data Plaza [`link`](https://data.seoul.go.kr/dataList/OA-15572/S/1/datasetView.do)
+
+The dataset comprises information on estimated sales for a total of 4 types of business districts, 1,596 business districts, and 63 industry categories. For the sake of analytical convenience, individual business-district identifiers were omitted, using only the business-district type and industry category as identifiers. Because the sales distribution contained many extreme values, a log transformation was applied. Accordingly, the dependent variable in this analysis is not the amount of sales per se, but rather the rate of change in sales.
+
+### Unit Definition
 
 The four business-district types as defined by the Seoul Business-District Analysis Service are as follows ([`refer`](https://golmok.seoul.go.kr/introduce.do)):
 
@@ -138,45 +142,78 @@ Industries were re-classified into 13 categories based on similarity and relevan
 
 This study conducted posterior-distribution inference using MCMC (Markov Chain Monte Carlo). Four Markov chains were run in parallel. The categorical variable of treatment status $$D_{i,k}$$ was sampled via the Binary Gibbs–Metropolis algorithm, while the remaining continuous parameters were sampled using NUTS (No-U-Turn Sampler). A burn-in of $$5{,}000 \times 4$$ initial samples was applied during the tuning phase, and from the subsequently sampled $$5{,}000 \times 4$$ samples, we extracted every 10th sample to mitigate autocorrelation, resulting in a final analysed sample of $$500 \times 4$$.
 
-Convergence diagnostics for the posterior distributions indicated overall adequacy. For the key parameters ($$\omega, \alpha, \beta, \gamma, \delta, p, q, \eta, u, v$$), we checked MCSE ≤ 0.1, ESS_bulk ≥ 400, ESS_tail ≥ 100, and $$\hat{R} \leq 1.05$$, and found that most parameters satisfied these criteria. However, for the treatment-probability deviations by business-district type ($u$) and by industry ($v$), some metrics slightly violated the criteria (excluding $$\hat{R}$$). As can be seen in the graph below, the posterior predictive distribution broadly matches the observed data.
-
 ![ppc](./desc/posterior_predictive_distribution.png)
 
-### Analysis
+As can be seen in the graph above, the posterior predictive distribution broadly matches the observed data. Convergence diagnostics for the posterior distributions indicated overall adequacy. For the key parameters ($$\omega, \alpha, \beta, \gamma, \delta, p, q, \eta, u, v$$), we checked $$MCSE \leq 0.1$$, $$ESS_{bulk} \geq 400$$, $$ESS_tail \geq 100$$, and $$\hat{R} \leq 1.05$$, and found that most parameters satisfied these criteria. However, for the treatment-probability deviations by business-district type ($$u$$) and by industry ($$v$$), some metrics slightly violated the criteria (excluding $$\hat{R}$$).
 
-The proposed model is based on a Bayesian approach rather than a conventional frequentist framework. In frequentist settings, probability represents the relative frequency of long-run repetition, whereas in the Bayesian paradigm, probability denotes a degree of belief given available information. This difference implies that parameter interpretation in the Bayesian context diverges from standard frequentist estimates. In our study, the treatment probability is not the observed frequency of “policy applied,” but rather the posterior uncertainty regarding whether the policy impacted a given unit. Accordingly, the estimated causal effect (ATT) is not the “average response of treated units,” but rather the posterior expected response for a given unit if it were treated.
+## result
+
+### Expected ATT Interpretation
+
+The proposed model is based on a Bayesian approach rather than a conventional frequentist framework. In frequentist settings, probability represents the relative frequency of long-run repetition, whereas in the Bayesian paradigm, probability denotes a degree of belief given available information. This difference implies that parameter interpretation in the Bayesian context diverges from standard frequentist estimates.
+
+In our study, the treatment probability is not the observed frequency of “policy applied,” but rather the posterior uncertainty regarding whether the policy impacted a given unit. Accordingly, the estimated causal effect (ATT) is not the “average response of treated units,” but rather the posterior expected response for a given unit if it were treated.
+
+In frequentist inference, the expected causal effect is defined as follows:
+
+$$
+\mathbb{E}\left[(\delta + p_{i} + q_{k})(D_{i,k} \times T_{t})\right]
+=\begin{cases}
+(\delta + p_{i} + q_{k})T_{t} \quad &\mathrm{if}\quad D_{i,k}=1 \\
+0 \quad &\mathrm{otherwise}
+\end{cases}
+$$
+
+In Bayesian inference, the expected causal effect is given by:
+
+$$
+\mathbb{E}\left[(\delta + p_{i} + q_{k})(D_{i,k} \times T_{t})\right]
+=\pi(\delta + p_{i} + q_{k})T_{t}
+$$
+
+Thus, while in the frequentist framework the expected causal effect refers to an observed average effect restricted to units that actually received the treatment, in the Bayesian framework it is interpreted as a posterior expected effect that incorporates uncertainty in treatment assignment.
+
+### Analysis: Intercept
+
+The intercept parameters correspond to the average fixed-effect $$\omega$$, the average causal effect $$\delta$$, and the average treatment-logit $$\eta$$.
 
 ![intercept](./desc/intercept.png)
 
-The intercept parameters correspond to the average fixed-effect $$\omega$$, the average causal effect $$\delta$$, and the average treatment-logit $$\eta$$. The graphs above show the posterior distributions of these three parameters. The average treatment logit is estimated at $$\eta = -0.23$$. Converting this to probability yields $$\sigma(\eta) \approx 0.443$$, which means that the likelihood of the social-distancing easing announcement affecting any given small-business unit is estimated at approximately **44.3%** on average. The average causal effect is estimated at $$\delta = 0.48$$; converting from the log-scale of sales to a rate of change gives $$\exp(\delta) - 1 \approx 0.614$$, indicating that following the easing announcement each small-business unit’s sales are estimated to have increased by about **61.4%** on average compared to the prior period.
+The graphs above show the posterior distributions of these three parameters. The average treatment logit is estimated at $$\eta = -0.23$$. Converting this to probability yields $$\sigma(\eta) \approx 0.443$$, which means that the likelihood of the social-distancing easing announcement affecting any given small-business unit is estimated at approximately $$44.3\%$$ on average.
 
-| Area type | Treated prob. | ATT |
-|:---:|:---:|:---:|
-| 골목상권 | 1.9% | +947.1% |
-| 관광특구 | 49.2% | −41.3% |
-| 발달상권 | 0.75% | +209.0% |
-| 전통시장 | 99.8% | −19.1% |
+The average causal effect is estimated at $$\delta = 0.48$$; converting from the log-scale of sales to a rate of change gives $$\exp(\delta) - 1 \approx 0.614$$. Accounting for probabilistic treatment assignment, the expected percentage change is given by $$\pi\left(\exp(\delta)-1\right)=0.443(\exp(0.48)-1)\approx0.273$$, indicating that, once treatment uncertainty is taken into account, small-business sales are estimated to have increased by approximately $$27.3\\%$$ on average compared to the prior period.
 
-Examining the treated-probabilities $$\sigma(\eta + u)$$ by area type reveals that 골목상권 (1.9 %) and 발달상권 (0.75 %) had very low probabilities, indicating these were not the primary direct targets of the policy. In contrast, 전통시장 (99.8 %) had a very high probability, pointing to it being a core implementation target, while 관광특구 (49.2 %) lay at an intermediate level. At the same time, the posterior means of causal effects (ATT = $$\delta + p$$) show that 골목상권 and 발달상권 registered large positive responses (＋947.1 %, +209.0 %), whereas 관광특구 and 전통시장 exhibited negative responses (−41.3 %, −19.1 %).
+### Analysis: Area Type
+
+| Area type | Treated Prob. | ATT | Expected ATT |
+|:---:|:---:|:---:|:---:|
+| 골목상권 | $$1.9\\%$$ | $$+947.1\\%$$ | $$+18.0\\%$$ |
+| 관광특구 | $$49.2\\%$$ | $$−41.3\\%$$ | $$-20.3\\%$$ |
+| 발달상권 | $$0.75\\%$$ | $$+209.0\\%$$ | $$+1.6\\%$$ |
+| 전통시장 | $$99.8\\%$$ | $$−19.1\\%$$ | $$-19.0\\%$$ |
+
+Examining the treated-probabilities $$\sigma(\eta + u_{i})$$ by area type reveals that 골목상권 ($$1.9\\%$$) and 발달상권 ($$0.75\\%$$) had very low probabilities, indicating these were not the primary direct targets of the policy. In contrast, 전통시장 ($$99.8\\%$$) had a very high probability, pointing to it being a core implementation target, while 관광특구 ($$49.2\\%$$) lay at an intermediate level. At the same time, the posterior means of causal effects ($$\exp(\delta + p)-1$$) show that 골목상권 and 발달상권 registered large positive responses ($$+18.0\\%$$, $$+1.6\\%$$), whereas 관광특구 and 전통시장 exhibited negative responses ($$-20.3\\%$$, $$-19.0\\%$$).
 
 This pattern can be interpreted as follows: 골목상권 and 발달상권 were not originally the direct focus of the social-distancing easing policy, and thus the announcement served as an explicit signal, triggering a rapid rebound in consumer sentiment and sales. On the other hand, 관광특구 and 전통시장 had already been part of the policy’s main application domain, and the easing announcement essentially formalised a recovery process that was already underway. As a result, their additional improvement potential following the announcement was limited, and in some cases a compensatory effect emerged.
 
-| Industry | Treated prob. | ATT |
-|:---:|:---:|:---:|
-| 가전제품업 | 13.4% | −0.9% |
-| 건강서비스업 | 9.8% | +246.3% |
-| 건강소매업 | 9.7% | +76.0% |
-| 교육서비스업 | 99.8% | −0.2% |
-| 부동산업 | 3.2% | −68.6% |
-| 사치재소매업 | 44.4% | +605.7% |
-| 생활서비스업 | 6.4% | +101.3% |
-| 숙박업 | 5.8% | −0.9% |
-| 실내여가업 | 9.6% | +230.7% |
-| 외식업 | 43.9% | +249.3% |
-| 자동차업 | 99.8% | −36.7% |
-| 전자상거래업 | 49.2% | −62.6% |
-| 필수재소매업 | 6.6% | +558.0% |
+### Analysis: Industry
 
-Looking across industries, those with treated probabilities below 10 % (e.g., 건강서비스업, 건강소매업, 생활서비스업, 필수재소매업) were generally not direct policy targets and exhibited high positive ATT. In contrast, industries such as 교육서비스업 and 자동차업 had treated probabilities around 100 %, consistent with policy application targets. Industries in the 40 %–50 % range (e.g., 사치재소매업, 외식업, 전자상거래업) were partially exposed. The highest positive ATT values occurred in industries such as 사치재소매업 (+605.7 %), 필수재소매업 (+558.0 %), 건강서비스업 (+246.3 %), and 외식업 (+249.3 %). Meanwhile, industries such as 교육서비스업, 자동차업, 전자상거래업, 부동산업, 숙박업 displayed negative ATT.
+| Industry | Treated prob. | ATT | Expected ATT |
+|:---:|:---:|:---:|:---:|
+| 가전제품업 | $$13.4\\%$$ | $$−0.9\\%$$ | $$-0.12\\%$$ |
+| 건강서비스업 | $$9.8\\%$$ | $$+246.3\\%$$ | $$+24.1\\%$$ |
+| 건강소매업 | $$9.7\\%$$ | $$+76.0\\%$$ | $$+7.4\\%$$ |
+| 교육서비스업 | $$99.8\\%$$ | $$−0.2\\%$$ | $$-0.2\\%$$ |
+| 부동산업 | $$3.2\\%$$ | $$−68.6\\%$$ | $$-2.2\\%$$ |
+| 사치재소매업 | $$44.4\\%$$ | $$+605.7\\%$$ | $$+269.0\\%$$ |
+| 생활서비스업 | 6.4\\%$$ | $$+101.3\\%$$ | $$+6.5\\%$$ |
+| 숙박업 | $$5.8\\%$$ | $$−0.9\\%$$ | $$-0.05\\%$$ |
+| 실내여가업 | $$9.6\\%$$ | $$+230.7\\%$$ | $$+22.1\\%$$ |
+| 외식업 | $$43.9\\%$$ | $$+249.3\\%$$ | $$+109.5\\%$$ |
+| 자동차업 | $$99.8\\%$$ | $$−36.7\\%$$ | $$-36.6\\%$$ |
+| 전자상거래업 | $$49.2\\%$$ | $$−62.6\\%$$ | $$-30.8\\%$$ |
+| 필수재소매업 | $$6.6\\%$$ | $$+558.0\\%$$ | $$+36.8\\%$$ |
+
+Looking across industries, those with treated probabilities below $$10\\%$$ (e.g., 건강서비스업, 건강소매업, 생활서비스업, 필수재소매업) were generally not direct policy targets and exhibited high positive ATT. In contrast, industries such as 교육서비스업 and 자동차업 had treated probabilities around $$100\\%$$, consistent with policy application targets. Industries in the $$40\\% ~ 50\\%$$ range (e.g., 사치재소매업, 외식업, 전자상거래업) were partially exposed. The highest positive ATT values occurred in industries such as 사치재소매업 ($$+269.0\\%$$), 필수재소매업 ($$+36.8\\%$$), 건강서비스업 ($$+24.1\\%$$), and 외식업 ($$+109.5\\%$$). Meanwhile, industries such as 교육서비스업, 자동차업, 전자상거래업, 부동산업, 숙박업 displayed negative ATT.
 
 As with the area-type analysis, a clear inverse relationship emerges: industries with low treated probability tend to exhibit high positive ATT, whereas those with high treated probability show low or negative ATT. This suggests that in sectors with low exposure probability, the easing announcement functioned as a consumer-sentiment recovery trigger, while in sectors already richly exposed the announcement marked a stage of policy-expectation exhaustion or adjustment phase.
