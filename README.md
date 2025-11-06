@@ -144,7 +144,7 @@ This study conducted posterior-distribution inference using MCMC (Markov Chain M
 
 ![ppc](./desc/posterior_predictive_distribution.png)
 
-As can be seen in the graph above, the posterior predictive distribution broadly matches the observed data. Convergence diagnostics for the posterior distributions indicated overall adequacy. For the key parameters ($$\omega, \alpha, \beta, \gamma, \delta, p, q, \eta, u, v$$), we checked $$MCSE \leq 0.1$$, $$ESS_{bulk} \geq 400$$, $$ESS_tail \geq 100$$, and $$\hat{R} \leq 1.05$$, and found that most parameters satisfied these criteria. However, for the treatment-probability deviations by business-district type ($$u$$) and by industry ($$v$$), some metrics slightly violated the criteria (excluding $$\hat{R}$$).
+As can be seen in the graph above, the posterior predictive distribution broadly matches the observed data. Convergence diagnostics for the posterior distributions indicated overall adequacy. For the key parameters ($$\omega, \alpha, \beta, \gamma, \delta, p, q, \eta, u, v$$), we checked $$MCSE \leq 0.1$$, $$ESS_{bulk} \geq 400$$, $$ESS_{tail} \geq 100$$, and $$\hat{R} \leq 1.05$$, and found that most parameters satisfied these criteria. However, for the treatment-probability deviations by business-district type ($$u$$) and by industry ($$v$$), some metrics slightly violated the criteria (excluding $$\hat{R}$$).
 
 ## result
 
@@ -168,7 +168,7 @@ In Bayesian inference, the expected causal effect is given by:
 
 $$
 \mathbb{E}\left[(\delta + p_{i} + q_{k})(D_{i,k} \times T_{t})\right]
-=\pi(\delta + p_{i} + q_{k})T_{t}
+=\pi_{i,k}(\delta + p_{i} + q_{k})T_{t}
 $$
 
 Thus, while in the frequentist framework the expected causal effect refers to an observed average effect restricted to units that actually received the treatment, in the Bayesian framework it is interpreted as a posterior expected effect that incorporates uncertainty in treatment assignment.
@@ -214,6 +214,6 @@ This pattern can be interpreted as follows: 골목상권 and 발달상권 were n
 | 전자상거래업 | $$49.2\\%$$ | $$−62.6\\%$$ | $$-30.8\\%$$ |
 | 필수재소매업 | $$6.6\\%$$ | $$+558.0\\%$$ | $$+36.8\\%$$ |
 
-Looking across industries, those with treated probabilities below $$10\\%$$ (e.g., 건강서비스업, 건강소매업, 생활서비스업, 필수재소매업) were generally not direct policy targets and exhibited high positive ATT. In contrast, industries such as 교육서비스업 and 자동차업 had treated probabilities around $$100\\%$$, consistent with policy application targets. Industries in the $$40\\% ~ 50\\%$$ range (e.g., 사치재소매업, 외식업, 전자상거래업) were partially exposed. The highest positive ATT values occurred in industries such as 사치재소매업 ($$+269.0\\%$$), 필수재소매업 ($$+36.8\\%$$), 건강서비스업 ($$+24.1\\%$$), and 외식업 ($$+109.5\\%$$). Meanwhile, industries such as 교육서비스업, 자동차업, 전자상거래업, 부동산업, 숙박업 displayed negative ATT.
+Looking across industries, those with treated probabilities below $$10\\%$$ (e.g., 건강서비스업, 건강소매업, 생활서비스업, 필수재소매업) were generally not direct policy targets and exhibited high positive ATT. In contrast, industries such as 교육서비스업 and 자동차업 had treated probabilities around $$100\\%$$, consistent with policy application targets. Industries in the $$40\\%$$ ~ $$50\\%$$ range (e.g., 사치재소매업, 외식업, 전자상거래업) were partially exposed. The highest positive ATT values occurred in industries such as 사치재소매업 ($$+269.0\\%$$), 외식업 ($$+109.5\\%$$), 필수재소매업 ($$+36.8\\%$$), 건강서비스업 ($$+24.1\\%$$), and 실내여가업 ($$+22.1\\%$$). Meanwhile, industries such as 자동차업, 전자상거래업, 부동산업, 가전제품업, 교육서비스업, 숙박업 displayed negative ATT.
 
 As with the area-type analysis, a clear inverse relationship emerges: industries with low treated probability tend to exhibit high positive ATT, whereas those with high treated probability show low or negative ATT. This suggests that in sectors with low exposure probability, the easing announcement functioned as a consumer-sentiment recovery trigger, while in sectors already richly exposed the announcement marked a stage of policy-expectation exhaustion or adjustment phase.
